@@ -3,10 +3,6 @@ from scipy.optimize import linprog
 #Funcion para obtener datos de entrada (input)
 def obtener(datos):
     return input(datos).strip()
-
-
-    
-
 def datos():
     #Obtener los coefiecientes de la funcion objetivo
     c_entradas=obtener('Ingrese los coeficientes de la funcion objetivo, separados por espacio: ')
@@ -44,4 +40,3 @@ while m:
         datos()
     elif opcion=="2":
         m=False
-    
