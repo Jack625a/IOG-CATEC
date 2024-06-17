@@ -28,7 +28,7 @@ def datos():
 
     #Resolver el ejercicio
     resolver=linprog(c,A_ub=A,b_ub=b,method='simplex')
-    print('Z= ',resolver.fun)
+    print('Z= ',-resolver.fun)
     print('Variables x1,x2= ', resolver.x)
 
 print("Metodo Simplex para Programación Lineal")
