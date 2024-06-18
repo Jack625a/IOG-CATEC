@@ -27,7 +27,7 @@ def datos():
     c=[-coef for coef in c]
 
     #Resolver el ejercicio
-    resolver=linprog(c,A_ub=A,b_ub=b,method='simplex')
+    resolver=linprog(c,A_ub=A,b_ub=b,method='highs')
     print('Z= ',-resolver.fun)
     print('Variables x1,x2= ', resolver.x)
 
