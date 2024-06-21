@@ -5,10 +5,10 @@ from tkinter import messagebox
 from scipy.optimize import linprog
 
 #Paso 2. Crear una clase Principal Simplex
-class SimplexSolcion:
+class SimplexSolucion:
     def __init__(self,ventana):
         self.ventana=ventana
-        self.ventana.title("Metodo Simplex")
+        self.ventana.title("Metodo Simplex Paso a Paso")
 
         self.crear_interfaz()
         self.iteracion=0
@@ -43,8 +43,11 @@ class SimplexSolcion:
         self.btn_iteraciones=tk.Button(self.ventana, text="Iterar", command=self.pasoApaso)
         self.btn_iteraciones.grid(row=5,column=1,padx=10)
 
+        self.btn_resetear=tk.Button(self.ventana, text="Borrar Datos", command=self.borrar)
+        self.btn_resetear.grid(row=5,column=2,padx=10)
+
         self.texto_Salida=tk.Text(self.ventana, height=20, width=100)
-        self.texto_Salida.grid(row=6,column=0, padx=10,pady=10)
+        self.texto_Salida.grid(row=6,column=0, padx=10,pady=10, columnspan=3)
 
     #Incializacion del programa
     def inciar_simplex(self):
@@ -79,28 +82,28 @@ class SimplexSolcion:
 
             self.btn_iteraciones.config(state=tk.NORMAL)
         except Exception as e:
-            messagebox.showerror("Error al resolver el problema")
+            messagebox.showerror("Error al resolver el problema", str(e))
     
     #Resolver el ejercicio paso a paso
     def pasoApaso(self):
         #Comprobar que se encontro la solucion optima
-        if all(i>=0 for i in self.tabla[0,:-1]):
+        if all(i>=0 for i in self.tabla[-1,:-1]):
             self.texto_Salida.insert(tk.END, "\nSolución Óptima Encontrada.\n")
-            self.texto_Salida.insert(tk.END,f"Valor Óptimo: Z = {self.tabla[0, -1]}\n")
+            self.texto_Salida.insert(tk.END,f"Valor Óptimo: Z = {self.tabla[-1, -1]}\n")
 
             solucion=self.tabla[1:,-1]
             self.texto_Salida.insert(tk.END,f"Valor de decision: {solucion[:self.num_variables]}\n")
             self.btn_iteraciones.config(state=tk.DISABLED)
             return
 
-            # Seleccionar la columna pivote
-        pivote_columna = np.argmin(self.tabla[0, :-1])  # Entrantes
-        if all(fila[pivote_columna] <= 0 for fila in self.tabla[1:]):
+        # Seleccionar la columna pivote
+        pivote_columna = np.argmin(self.tabla[-1, :-1])  # Entrantes
+        if all(fila[pivote_columna] <= 0 for fila in self.tabla[:-1]):
             self.texto_Salida.insert(tk.END, "Error al resolver el problema")
             self.btn_iteraciones.config(state=tk.DISABLED)
             return
         # Realizar el pivoteo
-        calculo = [fila[-1] / fila[pivote_columna] if fila[pivote_columna] > 0 else float('inf') for fila in self.tabla[1:]]  # Fila valores salientes
+        calculo = [fila[-1] / fila[pivote_columna] if fila[pivote_columna] > 0 else float('inf') for fila in self.tabla[:-1]]  # Fila valores salientes
         pivote_fila = np.argmin(calculo)
         #Pivoteo
         elemento_pivote = self.tabla[pivote_fila, pivote_columna]
@@ -116,9 +119,26 @@ class SimplexSolcion:
         self.texto_Salida.insert(tk.END, "TABLA SIMPLEX \n")
         self.texto_Salida.insert(tk.END,f"{self.tabla}\n")
 
+    #metodo para borra los datos de la pantalla
+    def borrar(self):
+        self.entrada_funcion_objetivo.delete(0,tk.END)
+        self.entrada_num_restricciones.delete(0,tk.END)
+        self.entrada_restricciones.delete('1.0',tk.END)
+        self.entrada_igualdad.delete(0,tk.END)
+        self.texto_Salida.delete('1.0',tk.END)
+        self.btn_iteraciones.config(state=tk.DISABLED)
+        #Restablecer las variables 
+        self.iteracion=0
+        self.tabla=None
+        self.num_variables=0
+        self.num_holgura=0
+
+
+
+
 
 ventanaApp=tk.Tk()
-aplicacion=SimplexSolcion(ventanaApp)
+aplicacion=SimplexSolucion(ventanaApp)
 ventanaApp.mainloop()
 
 
